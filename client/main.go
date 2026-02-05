@@ -53,6 +53,73 @@ func testServerStreaming(client userv1.UserServiceClient)  {
 	}
 }
 
+func testClientStreaming(client userv1.UserServiceClient)  {
+	log.Println("\n========== Client-Side Streaming ==========")
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+  defer cancel()
+
+
+	// Open the stream
+  stream, err := client.UploadUserData(ctx)
+  if err != nil {
+    log.Fatalf("UploadUserData failed: %v", err)
+  }
+
+	// 1. Send metadata first
+  err = stream.Send(&userv1.UploadUserDataRequest{
+    Data: &userv1.UploadUserDataRequest_Metadata{
+    	Metadata: &userv1.UserMetadata{
+    	  UserId:    "user_1",
+    	  Filename:  "user_data.json",
+    	  TotalSize: 5000, // 5KB total
+    	},
+    },
+  })
+
+	if err != nil {
+    log.Fatalf("Failed to send metadata: %v", err)
+  }
+
+	log.Println("📤 Sent metadata")
+
+	// 2. Send data in 5 chunks (1KB each)
+	chunkSize := 1000 // 1KB
+  totalChunks := 5
+
+	for i := 0; i < totalChunks; i++ {
+		// Create fake data chunk
+    data := make([]byte, chunkSize)
+
+		for j := range data {
+      data[j] = byte(i) // Fill with chunk number
+    }
+
+		// Send chunk
+    err = stream.Send(&userv1.UploadUserDataRequest{
+      Data: &userv1.UploadUserDataRequest_Chunk{
+        Chunk: &userv1.UserDataChunk{
+          Data:        data,
+          ChunkNumber: int32(i),
+        },
+      },
+    })
+
+		if err != nil {
+      log.Fatalf("Failed to send chunk %d: %v", i, err)
+    }
+		log.Printf("📤 Sent chunk #%d (%d bytes)", i, chunkSize)
+    time.Sleep(time.Millisecond * 500) // Simulate upload time
+	}
+
+	// 3. Close the stream and receive response
+  resp, err := stream.CloseAndRecv()
+  if err != nil {
+    log.Fatalf("Failed to receive response: %v", err)
+  }
+	log.Printf("✅ Upload complete! Upload ID: %s, Bytes received: %d, Success: %v", resp.UploadId, resp.BytesReceived, resp.Success)
+}
+
 func main() {
 	conn, err := grpc.NewClient(
 		"localhost:50051",
@@ -116,4 +183,6 @@ func main() {
 
 	// Test server-side streaming
   testServerStreaming(client)
+	// Test client-side streaming
+  testClientStreaming(client)
 }
