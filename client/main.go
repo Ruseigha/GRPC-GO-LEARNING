@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"io"
 	"log"
 	"time"
 
@@ -10,6 +11,47 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
+
+
+func testServerStreaming(client userv1.UserServiceClient)  {
+	log.Println("\n========== Server-Side Streaming ==========")
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
+	defer cancel()
+
+
+	// Call the StreamNotifications RPC
+	stream, err := client.StreamNotifications(ctx, &userv1.StreamNotificationsRequest{
+		UserId: "user_1",
+	})
+
+	if err != nil {
+    log.Fatalf("StreamNotifications failed: %v", err)
+  }
+
+	// Receive messages in a loop
+	for {
+		notification, err := stream.Recv()
+
+		// Check if stream is done
+    if err == io.EOF {
+      log.Println("✅ Stream closed by server (all notifications received)")
+      break
+    }
+
+		// Check for other errors
+    if err != nil {
+      log.Fatalf("Error receiving notification: %v", err)
+    }
+
+		// Process the notification
+    log.Printf("📬 Received: [%s] %s - %s",
+      notification.Type,
+      notification.Title,
+      notification.Message,
+    )
+	}
+}
 
 func main() {
 	conn, err := grpc.NewClient(
@@ -71,4 +113,7 @@ func main() {
 	if err != nil {
 		log.Printf("❌ Expected error for non-existing user: %v", err)
 	}
+
+	// Test server-side streaming
+  testServerStreaming(client)
 }
