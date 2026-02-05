@@ -22,6 +22,7 @@ const (
 	UserService_GetUser_FullMethodName             = "/user.v1.UserService/GetUser"
 	UserService_CreateUser_FullMethodName          = "/user.v1.UserService/CreateUser"
 	UserService_StreamNotifications_FullMethodName = "/user.v1.UserService/StreamNotifications"
+	UserService_UploadUserData_FullMethodName      = "/user.v1.UserService/UploadUserData"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -36,6 +37,8 @@ type UserServiceClient interface {
 	CreateUser(ctx context.Context, in *CreateUSerRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	// Server-side streaming RPC
 	StreamNotifications(ctx context.Context, in *StreamNotificationsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Notification], error)
+	// Client-side streaming RPC
+	UploadUserData(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadUserDataRequest, UploadUserDataResponse], error)
 }
 
 type userServiceClient struct {
@@ -85,6 +88,19 @@ func (c *userServiceClient) StreamNotifications(ctx context.Context, in *StreamN
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type UserService_StreamNotificationsClient = grpc.ServerStreamingClient[Notification]
 
+func (c *userServiceClient) UploadUserData(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadUserDataRequest, UploadUserDataResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[1], UserService_UploadUserData_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[UploadUserDataRequest, UploadUserDataResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type UserService_UploadUserDataClient = grpc.ClientStreamingClient[UploadUserDataRequest, UploadUserDataResponse]
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -97,6 +113,8 @@ type UserServiceServer interface {
 	CreateUser(context.Context, *CreateUSerRequest) (*CreateUserResponse, error)
 	// Server-side streaming RPC
 	StreamNotifications(*StreamNotificationsRequest, grpc.ServerStreamingServer[Notification]) error
+	// Client-side streaming RPC
+	UploadUserData(grpc.ClientStreamingServer[UploadUserDataRequest, UploadUserDataResponse]) error
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -115,6 +133,9 @@ func (UnimplementedUserServiceServer) CreateUser(context.Context, *CreateUSerReq
 }
 func (UnimplementedUserServiceServer) StreamNotifications(*StreamNotificationsRequest, grpc.ServerStreamingServer[Notification]) error {
 	return status.Error(codes.Unimplemented, "method StreamNotifications not implemented")
+}
+func (UnimplementedUserServiceServer) UploadUserData(grpc.ClientStreamingServer[UploadUserDataRequest, UploadUserDataResponse]) error {
+	return status.Error(codes.Unimplemented, "method UploadUserData not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -184,6 +205,13 @@ func _UserService_StreamNotifications_Handler(srv interface{}, stream grpc.Serve
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type UserService_StreamNotificationsServer = grpc.ServerStreamingServer[Notification]
 
+func _UserService_UploadUserData_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(UserServiceServer).UploadUserData(&grpc.GenericServerStream[UploadUserDataRequest, UploadUserDataResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type UserService_UploadUserDataServer = grpc.ClientStreamingServer[UploadUserDataRequest, UploadUserDataResponse]
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -205,6 +233,11 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "StreamNotifications",
 			Handler:       _UserService_StreamNotifications_Handler,
 			ServerStreams: true,
+		},
+		{
+			StreamName:    "UploadUserData",
+			Handler:       _UserService_UploadUserData_Handler,
+			ClientStreams: true,
 		},
 	},
 	Metadata: "proto/user/v1/user.proto",

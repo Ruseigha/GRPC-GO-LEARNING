@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	userv1 "grpc-go-learning/gen/go/user/v1/user"
+	"io"
 	"log"
 	"net"
 	"time"
@@ -113,6 +114,64 @@ func (s *server) StreamNotifications(req *userv1.StreamNotificationsRequest, str
 
 	log.Printf("Finished streaming notifications for user %s", req.UserId)
   return nil
+}
+
+
+// UploadUserData implements client-side streaming
+func (S *server)  UploadUserData(stream userv1.UserService_UploadUserDataServer) error {
+	log.Println("UploadUserData called")
+
+	var (
+    	userID       string
+    	filename     string
+    	totalSize    int64
+    	bytesReceived int64
+    	chunkCount   int
+  )
+
+	// Receive messages from client
+	for {
+		req, err := stream.Recv()
+
+		// Check if client finished sending
+		if err == io.EOF {
+			log.Printf("Client finished sending. Received %d bytes in %d chunks", bytesReceived, chunkCount)
+
+			// Send final response to client
+			return stream.SendAndClose(&userv1.UploadUserDataResponse{
+				UploadId: fmt.Sprintf("upload_%s_%d", userID, time.Now().Unix()),
+				BytesReceived: bytesReceived,
+				Success:       true,
+			})
+		}
+
+		// Check for errors
+    if err != nil {
+      log.Printf("Error receiving data: %v", err)
+      return status.Errorf(codes.Internal, "failed to receive data: %v", err)
+    }
+
+		// Process the received message
+		switch data := req.Data.(type) {
+    case *userv1.UploadUserDataRequest_Metadata:
+      // First message: metadata
+      userID = data.Metadata.UserId
+      filename = data.Metadata.Filename
+      totalSize = data.Metadata.TotalSize
+      log.Printf("Receiving upload for user %s, file: %s, size: %d bytes", userID, filename, totalSize)
+
+    case *userv1.UploadUserDataRequest_Chunk:
+      // Subsequent messages: data chunks
+      chunkSize := len(data.Chunk.Data)
+      bytesReceived += int64(chunkSize)
+      chunkCount++
+      log.Printf("Received chunk #%d: %d bytes (total: %d/%d)", 
+      data.Chunk.ChunkNumber, chunkSize, bytesReceived, totalSize)
+
+    default:
+      return status.Error(codes.InvalidArgument, "unknown data type")
+    }
+	}
 }
 
 

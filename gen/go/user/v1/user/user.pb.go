@@ -7,12 +7,11 @@
 package user
 
 import (
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
-
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -75,6 +74,7 @@ func (UserStatus) EnumDescriptor() ([]byte, []int) {
 	return file_proto_user_v1_user_proto_rawDescGZIP(), []int{0}
 }
 
+// Notification type enum
 type NotificationType int32
 
 const (
@@ -533,6 +533,262 @@ func (x *Notification) GetTimestamp() int64 {
 	return 0
 }
 
+// Request message (streamed multiple times by client)
+type UploadUserDataRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to Data:
+	//
+	//	*UploadUserDataRequest_Metadata
+	//	*UploadUserDataRequest_Chunk
+	Data          isUploadUserDataRequest_Data `protobuf_oneof:"data"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadUserDataRequest) Reset() {
+	*x = UploadUserDataRequest{}
+	mi := &file_proto_user_v1_user_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadUserDataRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadUserDataRequest) ProtoMessage() {}
+
+func (x *UploadUserDataRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_v1_user_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadUserDataRequest.ProtoReflect.Descriptor instead.
+func (*UploadUserDataRequest) Descriptor() ([]byte, []int) {
+	return file_proto_user_v1_user_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *UploadUserDataRequest) GetData() isUploadUserDataRequest_Data {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+func (x *UploadUserDataRequest) GetMetadata() *UserMetadata {
+	if x != nil {
+		if x, ok := x.Data.(*UploadUserDataRequest_Metadata); ok {
+			return x.Metadata
+		}
+	}
+	return nil
+}
+
+func (x *UploadUserDataRequest) GetChunk() *UserDataChunk {
+	if x != nil {
+		if x, ok := x.Data.(*UploadUserDataRequest_Chunk); ok {
+			return x.Chunk
+		}
+	}
+	return nil
+}
+
+type isUploadUserDataRequest_Data interface {
+	isUploadUserDataRequest_Data()
+}
+
+type UploadUserDataRequest_Metadata struct {
+	Metadata *UserMetadata `protobuf:"bytes,1,opt,name=metadata,proto3,oneof"` // First message: metadata
+}
+
+type UploadUserDataRequest_Chunk struct {
+	Chunk *UserDataChunk `protobuf:"bytes,2,opt,name=chunk,proto3,oneof"` // Subsequent messages: data chunks
+}
+
+func (*UploadUserDataRequest_Metadata) isUploadUserDataRequest_Data() {}
+
+func (*UploadUserDataRequest_Chunk) isUploadUserDataRequest_Data() {}
+
+type UserMetadata struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Filename      string                 `protobuf:"bytes,2,opt,name=filename,proto3" json:"filename,omitempty"`
+	TotalSize     int64                  `protobuf:"varint,3,opt,name=total_size,json=totalSize,proto3" json:"total_size,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserMetadata) Reset() {
+	*x = UserMetadata{}
+	mi := &file_proto_user_v1_user_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserMetadata) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserMetadata) ProtoMessage() {}
+
+func (x *UserMetadata) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_v1_user_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserMetadata.ProtoReflect.Descriptor instead.
+func (*UserMetadata) Descriptor() ([]byte, []int) {
+	return file_proto_user_v1_user_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *UserMetadata) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *UserMetadata) GetFilename() string {
+	if x != nil {
+		return x.Filename
+	}
+	return ""
+}
+
+func (x *UserMetadata) GetTotalSize() int64 {
+	if x != nil {
+		return x.TotalSize
+	}
+	return 0
+}
+
+type UserDataChunk struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          []byte                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	ChunkNumber   int32                  `protobuf:"varint,2,opt,name=chunk_number,json=chunkNumber,proto3" json:"chunk_number,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserDataChunk) Reset() {
+	*x = UserDataChunk{}
+	mi := &file_proto_user_v1_user_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserDataChunk) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserDataChunk) ProtoMessage() {}
+
+func (x *UserDataChunk) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_v1_user_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserDataChunk.ProtoReflect.Descriptor instead.
+func (*UserDataChunk) Descriptor() ([]byte, []int) {
+	return file_proto_user_v1_user_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *UserDataChunk) GetData() []byte {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+func (x *UserDataChunk) GetChunkNumber() int32 {
+	if x != nil {
+		return x.ChunkNumber
+	}
+	return 0
+}
+
+// Response message (sent once by server)
+type UploadUserDataResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UploadId      string                 `protobuf:"bytes,1,opt,name=upload_id,json=uploadId,proto3" json:"upload_id,omitempty"`
+	BytesReceived int64                  `protobuf:"varint,2,opt,name=bytes_received,json=bytesReceived,proto3" json:"bytes_received,omitempty"`
+	Success       bool                   `protobuf:"varint,3,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadUserDataResponse) Reset() {
+	*x = UploadUserDataResponse{}
+	mi := &file_proto_user_v1_user_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadUserDataResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadUserDataResponse) ProtoMessage() {}
+
+func (x *UploadUserDataResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_v1_user_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadUserDataResponse.ProtoReflect.Descriptor instead.
+func (*UploadUserDataResponse) Descriptor() ([]byte, []int) {
+	return file_proto_user_v1_user_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *UploadUserDataResponse) GetUploadId() string {
+	if x != nil {
+		return x.UploadId
+	}
+	return ""
+}
+
+func (x *UploadUserDataResponse) GetBytesReceived() int64 {
+	if x != nil {
+		return x.BytesReceived
+	}
+	return 0
+}
+
+func (x *UploadUserDataResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
 var File_proto_user_v1_user_proto protoreflect.FileDescriptor
 
 const file_proto_user_v1_user_proto_rawDesc = "" +
@@ -562,7 +818,23 @@ const file_proto_user_v1_user_proto_rawDesc = "" +
 	"\x05title\x18\x03 \x01(\tR\x05title\x12\x18\n" +
 	"\amessage\x18\x04 \x01(\tR\amessage\x12-\n" +
 	"\x04type\x18\x05 \x01(\x0e2\x19.user.v1.NotificationTypeR\x04type\x12\x1c\n" +
-	"\ttimestamp\x18\x06 \x01(\x03R\ttimestamp*v\n" +
+	"\ttimestamp\x18\x06 \x01(\x03R\ttimestamp\"\x84\x01\n" +
+	"\x15UploadUserDataRequest\x123\n" +
+	"\bmetadata\x18\x01 \x01(\v2\x15.user.v1.UserMetadataH\x00R\bmetadata\x12.\n" +
+	"\x05chunk\x18\x02 \x01(\v2\x16.user.v1.UserDataChunkH\x00R\x05chunkB\x06\n" +
+	"\x04data\"b\n" +
+	"\fUserMetadata\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1a\n" +
+	"\bfilename\x18\x02 \x01(\tR\bfilename\x12\x1d\n" +
+	"\n" +
+	"total_size\x18\x03 \x01(\x03R\ttotalSize\"F\n" +
+	"\rUserDataChunk\x12\x12\n" +
+	"\x04data\x18\x01 \x01(\fR\x04data\x12!\n" +
+	"\fchunk_number\x18\x02 \x01(\x05R\vchunkNumber\"v\n" +
+	"\x16UploadUserDataResponse\x12\x1b\n" +
+	"\tupload_id\x18\x01 \x01(\tR\buploadId\x12%\n" +
+	"\x0ebytes_received\x18\x02 \x01(\x03R\rbytesReceived\x12\x18\n" +
+	"\asuccess\x18\x03 \x01(\bR\asuccess*v\n" +
 	"\n" +
 	"UserStatus\x12\x1b\n" +
 	"\x17USER_STATUS_UNSPECIFIED\x10\x00\x12\x16\n" +
@@ -574,12 +846,13 @@ const file_proto_user_v1_user_proto_rawDesc = "" +
 	"\x16NOTIFICATION_TYPE_INFO\x10\x01\x12\x1d\n" +
 	"\x19NOTIFICATION_TYPE_WARNING\x10\x02\x12\x1b\n" +
 	"\x17NOTIFICATION_TYPE_ERROR\x10\x03\x12\x1d\n" +
-	"\x19NOTIFICATION_TYPE_SUCCESS\x10\x042\xe7\x01\n" +
+	"\x19NOTIFICATION_TYPE_SUCCESS\x10\x042\xbc\x02\n" +
 	"\vUserService\x12<\n" +
 	"\aGetUser\x12\x17.user.v1.GetUserRequest\x1a\x18.user.v1.GetUserResponse\x12E\n" +
 	"\n" +
 	"CreateUser\x12\x1a.user.v1.CreateUSerRequest\x1a\x1b.user.v1.CreateUserResponse\x12S\n" +
-	"\x13StreamNotifications\x12#.user.v1.StreamNotificationsRequest\x1a\x15.user.v1.Notification0\x01B\x15Z\x13gen/go/user/v1/userb\x06proto3"
+	"\x13StreamNotifications\x12#.user.v1.StreamNotificationsRequest\x1a\x15.user.v1.Notification0\x01\x12S\n" +
+	"\x0eUploadUserData\x12\x1e.user.v1.UploadUserDataRequest\x1a\x1f.user.v1.UploadUserDataResponse(\x01B\x15Z\x13gen/go/user/v1/userb\x06proto3"
 
 var (
 	file_proto_user_v1_user_proto_rawDescOnce sync.Once
@@ -594,7 +867,7 @@ func file_proto_user_v1_user_proto_rawDescGZIP() []byte {
 }
 
 var file_proto_user_v1_user_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_proto_user_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_proto_user_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_proto_user_v1_user_proto_goTypes = []any{
 	(UserStatus)(0),                    // 0: user.v1.UserStatus
 	(NotificationType)(0),              // 1: user.v1.NotificationType
@@ -605,23 +878,31 @@ var file_proto_user_v1_user_proto_goTypes = []any{
 	(*User)(nil),                       // 6: user.v1.User
 	(*StreamNotificationsRequest)(nil), // 7: user.v1.StreamNotificationsRequest
 	(*Notification)(nil),               // 8: user.v1.Notification
+	(*UploadUserDataRequest)(nil),      // 9: user.v1.UploadUserDataRequest
+	(*UserMetadata)(nil),               // 10: user.v1.UserMetadata
+	(*UserDataChunk)(nil),              // 11: user.v1.UserDataChunk
+	(*UploadUserDataResponse)(nil),     // 12: user.v1.UploadUserDataResponse
 }
 var file_proto_user_v1_user_proto_depIdxs = []int32{
-	6, // 0: user.v1.GetUserResponse.user:type_name -> user.v1.User
-	6, // 1: user.v1.CreateUserResponse.user:type_name -> user.v1.User
-	0, // 2: user.v1.User.status:type_name -> user.v1.UserStatus
-	1, // 3: user.v1.Notification.type:type_name -> user.v1.NotificationType
-	2, // 4: user.v1.UserService.GetUser:input_type -> user.v1.GetUserRequest
-	4, // 5: user.v1.UserService.CreateUser:input_type -> user.v1.CreateUSerRequest
-	7, // 6: user.v1.UserService.StreamNotifications:input_type -> user.v1.StreamNotificationsRequest
-	3, // 7: user.v1.UserService.GetUser:output_type -> user.v1.GetUserResponse
-	5, // 8: user.v1.UserService.CreateUser:output_type -> user.v1.CreateUserResponse
-	8, // 9: user.v1.UserService.StreamNotifications:output_type -> user.v1.Notification
-	7, // [7:10] is the sub-list for method output_type
-	4, // [4:7] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	6,  // 0: user.v1.GetUserResponse.user:type_name -> user.v1.User
+	6,  // 1: user.v1.CreateUserResponse.user:type_name -> user.v1.User
+	0,  // 2: user.v1.User.status:type_name -> user.v1.UserStatus
+	1,  // 3: user.v1.Notification.type:type_name -> user.v1.NotificationType
+	10, // 4: user.v1.UploadUserDataRequest.metadata:type_name -> user.v1.UserMetadata
+	11, // 5: user.v1.UploadUserDataRequest.chunk:type_name -> user.v1.UserDataChunk
+	2,  // 6: user.v1.UserService.GetUser:input_type -> user.v1.GetUserRequest
+	4,  // 7: user.v1.UserService.CreateUser:input_type -> user.v1.CreateUSerRequest
+	7,  // 8: user.v1.UserService.StreamNotifications:input_type -> user.v1.StreamNotificationsRequest
+	9,  // 9: user.v1.UserService.UploadUserData:input_type -> user.v1.UploadUserDataRequest
+	3,  // 10: user.v1.UserService.GetUser:output_type -> user.v1.GetUserResponse
+	5,  // 11: user.v1.UserService.CreateUser:output_type -> user.v1.CreateUserResponse
+	8,  // 12: user.v1.UserService.StreamNotifications:output_type -> user.v1.Notification
+	12, // 13: user.v1.UserService.UploadUserData:output_type -> user.v1.UploadUserDataResponse
+	10, // [10:14] is the sub-list for method output_type
+	6,  // [6:10] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_proto_user_v1_user_proto_init() }
@@ -629,13 +910,17 @@ func file_proto_user_v1_user_proto_init() {
 	if File_proto_user_v1_user_proto != nil {
 		return
 	}
+	file_proto_user_v1_user_proto_msgTypes[7].OneofWrappers = []any{
+		(*UploadUserDataRequest_Metadata)(nil),
+		(*UploadUserDataRequest_Chunk)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_user_v1_user_proto_rawDesc), len(file_proto_user_v1_user_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   7,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
