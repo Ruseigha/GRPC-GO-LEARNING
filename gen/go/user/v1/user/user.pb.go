@@ -74,6 +74,61 @@ func (UserStatus) EnumDescriptor() ([]byte, []int) {
 	return file_proto_user_v1_user_proto_rawDescGZIP(), []int{0}
 }
 
+type NotificationType int32
+
+const (
+	NotificationType_NOTIFICATION_TYPE_UNSPECIFIED NotificationType = 0
+	NotificationType_NOTIFICATION_TYPE_INFO        NotificationType = 1
+	NotificationType_NOTIFICATION_TYPE_WARNING     NotificationType = 2
+	NotificationType_NOTIFICATION_TYPE_ERROR       NotificationType = 3
+	NotificationType_NOTIFICATION_TYPE_SUCCESS     NotificationType = 4
+)
+
+// Enum value maps for NotificationType.
+var (
+	NotificationType_name = map[int32]string{
+		0: "NOTIFICATION_TYPE_UNSPECIFIED",
+		1: "NOTIFICATION_TYPE_INFO",
+		2: "NOTIFICATION_TYPE_WARNING",
+		3: "NOTIFICATION_TYPE_ERROR",
+		4: "NOTIFICATION_TYPE_SUCCESS",
+	}
+	NotificationType_value = map[string]int32{
+		"NOTIFICATION_TYPE_UNSPECIFIED": 0,
+		"NOTIFICATION_TYPE_INFO":        1,
+		"NOTIFICATION_TYPE_WARNING":     2,
+		"NOTIFICATION_TYPE_ERROR":       3,
+		"NOTIFICATION_TYPE_SUCCESS":     4,
+	}
+)
+
+func (x NotificationType) Enum() *NotificationType {
+	p := new(NotificationType)
+	*p = x
+	return p
+}
+
+func (x NotificationType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (NotificationType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_user_v1_user_proto_enumTypes[1].Descriptor()
+}
+
+func (NotificationType) Type() protoreflect.EnumType {
+	return &file_proto_user_v1_user_proto_enumTypes[1]
+}
+
+func (x NotificationType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use NotificationType.Descriptor instead.
+func (NotificationType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_user_v1_user_proto_rawDescGZIP(), []int{1}
+}
+
 // Resquest message for GetUser
 type GetUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -347,6 +402,136 @@ func (x *User) GetStatus() UserStatus {
 	return UserStatus_USER_STATUS_UNSPECIFIED
 }
 
+// Request message
+type StreamNotificationsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StreamNotificationsRequest) Reset() {
+	*x = StreamNotificationsRequest{}
+	mi := &file_proto_user_v1_user_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StreamNotificationsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StreamNotificationsRequest) ProtoMessage() {}
+
+func (x *StreamNotificationsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_v1_user_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StreamNotificationsRequest.ProtoReflect.Descriptor instead.
+func (*StreamNotificationsRequest) Descriptor() ([]byte, []int) {
+	return file_proto_user_v1_user_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *StreamNotificationsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+// Response message (streamed multiple times)
+type Notification struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	NotificationId string                 `protobuf:"bytes,1,opt,name=notification_id,json=notificationId,proto3" json:"notification_id,omitempty"`
+	UserId         string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Title          string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
+	Message        string                 `protobuf:"bytes,4,opt,name=message,proto3" json:"message,omitempty"`
+	Type           NotificationType       `protobuf:"varint,5,opt,name=type,proto3,enum=user.v1.NotificationType" json:"type,omitempty"`
+	Timestamp      int64                  `protobuf:"varint,6,opt,name=timestamp,proto3" json:"timestamp,omitempty"` // Unix timestamp
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *Notification) Reset() {
+	*x = Notification{}
+	mi := &file_proto_user_v1_user_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Notification) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Notification) ProtoMessage() {}
+
+func (x *Notification) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_v1_user_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Notification.ProtoReflect.Descriptor instead.
+func (*Notification) Descriptor() ([]byte, []int) {
+	return file_proto_user_v1_user_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *Notification) GetNotificationId() string {
+	if x != nil {
+		return x.NotificationId
+	}
+	return ""
+}
+
+func (x *Notification) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *Notification) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *Notification) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *Notification) GetType() NotificationType {
+	if x != nil {
+		return x.Type
+	}
+	return NotificationType_NOTIFICATION_TYPE_UNSPECIFIED
+}
+
+func (x *Notification) GetTimestamp() int64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
 var File_proto_user_v1_user_proto protoreflect.FileDescriptor
 
 const file_proto_user_v1_user_proto_rawDesc = "" +
@@ -367,17 +552,33 @@ const file_proto_user_v1_user_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
 	"\x05email\x18\x03 \x01(\tR\x05email\x12\x10\n" +
 	"\x03age\x18\x04 \x01(\x05R\x03age\x12+\n" +
-	"\x06status\x18\x05 \x01(\x0e2\x13.user.v1.UserStatusR\x06status*v\n" +
+	"\x06status\x18\x05 \x01(\x0e2\x13.user.v1.UserStatusR\x06status\"5\n" +
+	"\x1aStreamNotificationsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"\xcd\x01\n" +
+	"\fNotification\x12'\n" +
+	"\x0fnotification_id\x18\x01 \x01(\tR\x0enotificationId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x14\n" +
+	"\x05title\x18\x03 \x01(\tR\x05title\x12\x18\n" +
+	"\amessage\x18\x04 \x01(\tR\amessage\x12-\n" +
+	"\x04type\x18\x05 \x01(\x0e2\x19.user.v1.NotificationTypeR\x04type\x12\x1c\n" +
+	"\ttimestamp\x18\x06 \x01(\x03R\ttimestamp*v\n" +
 	"\n" +
 	"UserStatus\x12\x1b\n" +
 	"\x17USER_STATUS_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12USER_STATUS_ACTIVE\x10\x01\x12\x18\n" +
 	"\x14USER_STATUS_INACTIVE\x10\x02\x12\x19\n" +
-	"\x15USER_STATUS_SUSPENDED\x10\x032\x92\x01\n" +
+	"\x15USER_STATUS_SUSPENDED\x10\x03*\xac\x01\n" +
+	"\x10NotificationType\x12!\n" +
+	"\x1dNOTIFICATION_TYPE_UNSPECIFIED\x10\x00\x12\x1a\n" +
+	"\x16NOTIFICATION_TYPE_INFO\x10\x01\x12\x1d\n" +
+	"\x19NOTIFICATION_TYPE_WARNING\x10\x02\x12\x1b\n" +
+	"\x17NOTIFICATION_TYPE_ERROR\x10\x03\x12\x1d\n" +
+	"\x19NOTIFICATION_TYPE_SUCCESS\x10\x042\xe7\x01\n" +
 	"\vUserService\x12<\n" +
 	"\aGetUser\x12\x17.user.v1.GetUserRequest\x1a\x18.user.v1.GetUserResponse\x12E\n" +
 	"\n" +
-	"CreateUser\x12\x1a.user.v1.CreateUSerRequest\x1a\x1b.user.v1.CreateUserResponseB\x15Z\x13gen/go/user/v1/userb\x06proto3"
+	"CreateUser\x12\x1a.user.v1.CreateUSerRequest\x1a\x1b.user.v1.CreateUserResponse\x12S\n" +
+	"\x13StreamNotifications\x12#.user.v1.StreamNotificationsRequest\x1a\x15.user.v1.Notification0\x01B\x15Z\x13gen/go/user/v1/userb\x06proto3"
 
 var (
 	file_proto_user_v1_user_proto_rawDescOnce sync.Once
@@ -391,29 +592,35 @@ func file_proto_user_v1_user_proto_rawDescGZIP() []byte {
 	return file_proto_user_v1_user_proto_rawDescData
 }
 
-var file_proto_user_v1_user_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_proto_user_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_proto_user_v1_user_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_proto_user_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_proto_user_v1_user_proto_goTypes = []any{
-	(UserStatus)(0),            // 0: user.v1.UserStatus
-	(*GetUserRequest)(nil),     // 1: user.v1.GetUserRequest
-	(*GetUserResponse)(nil),    // 2: user.v1.GetUserResponse
-	(*CreateUSerRequest)(nil),  // 3: user.v1.CreateUSerRequest
-	(*CreateUserResponse)(nil), // 4: user.v1.CreateUserResponse
-	(*User)(nil),               // 5: user.v1.User
+	(UserStatus)(0),                    // 0: user.v1.UserStatus
+	(NotificationType)(0),              // 1: user.v1.NotificationType
+	(*GetUserRequest)(nil),             // 2: user.v1.GetUserRequest
+	(*GetUserResponse)(nil),            // 3: user.v1.GetUserResponse
+	(*CreateUSerRequest)(nil),          // 4: user.v1.CreateUSerRequest
+	(*CreateUserResponse)(nil),         // 5: user.v1.CreateUserResponse
+	(*User)(nil),                       // 6: user.v1.User
+	(*StreamNotificationsRequest)(nil), // 7: user.v1.StreamNotificationsRequest
+	(*Notification)(nil),               // 8: user.v1.Notification
 }
 var file_proto_user_v1_user_proto_depIdxs = []int32{
-	5, // 0: user.v1.GetUserResponse.user:type_name -> user.v1.User
-	5, // 1: user.v1.CreateUserResponse.user:type_name -> user.v1.User
+	6, // 0: user.v1.GetUserResponse.user:type_name -> user.v1.User
+	6, // 1: user.v1.CreateUserResponse.user:type_name -> user.v1.User
 	0, // 2: user.v1.User.status:type_name -> user.v1.UserStatus
-	1, // 3: user.v1.UserService.GetUser:input_type -> user.v1.GetUserRequest
-	3, // 4: user.v1.UserService.CreateUser:input_type -> user.v1.CreateUSerRequest
-	2, // 5: user.v1.UserService.GetUser:output_type -> user.v1.GetUserResponse
-	4, // 6: user.v1.UserService.CreateUser:output_type -> user.v1.CreateUserResponse
-	5, // [5:7] is the sub-list for method output_type
-	3, // [3:5] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	1, // 3: user.v1.Notification.type:type_name -> user.v1.NotificationType
+	2, // 4: user.v1.UserService.GetUser:input_type -> user.v1.GetUserRequest
+	4, // 5: user.v1.UserService.CreateUser:input_type -> user.v1.CreateUSerRequest
+	7, // 6: user.v1.UserService.StreamNotifications:input_type -> user.v1.StreamNotificationsRequest
+	3, // 7: user.v1.UserService.GetUser:output_type -> user.v1.GetUserResponse
+	5, // 8: user.v1.UserService.CreateUser:output_type -> user.v1.CreateUserResponse
+	8, // 9: user.v1.UserService.StreamNotifications:output_type -> user.v1.Notification
+	7, // [7:10] is the sub-list for method output_type
+	4, // [4:7] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_proto_user_v1_user_proto_init() }
@@ -426,8 +633,8 @@ func file_proto_user_v1_user_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_user_v1_user_proto_rawDesc), len(file_proto_user_v1_user_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   5,
+			NumEnums:      2,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
